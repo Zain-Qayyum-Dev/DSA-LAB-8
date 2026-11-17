@@ -1,61 +1,91 @@
 #include <iostream>
 using namespace std;
 
-const int MAX = 100;
-int queue[MAX];
-int front = -1, rear = -1;
-int nextID = 1;
+class HospitalQueue {
+private:
+    static const int MAX = 100;
+    int queue[MAX];
+    int front;
+    int rear;
+    int nextID;
 
-void RegisterPatient() {
-    if (rear == MAX - 1) { cout << "Waiting room is FULL!\n"; return; }
-    if (front == -1) front = rear = 0;
-    else rear++;
-    queue[rear] = nextID++;
-    cout << "Patient registered with ID: " << queue[rear] << endl;
-}
+public:
+    // Constructor
+    HospitalQueue() {
+        front = -1;
+        rear = -1;
+        nextID = 1;
+    }
 
-void ServePatient() {
-    if (front == -1) { cout << "No patients waiting.\n"; return; }
-    cout << "Serving patient ID: " << queue[front] << endl;
-    if (front == rear) front = rear = -1;
-    else front++;
-}
+    // Function to register a patient
+    void RegisterPatient() {
+        if (rear == MAX - 1) { 
+            cout << "Waiting room is FULL!\n"; 
+            return; 
+        }
+        if (front == -1) front = rear = 0;
+        else rear++;
+        
+        queue[rear] = nextID++;
+        cout << "Patient registered with ID: " << queue[rear] << endl;
+    }
 
-void CancelAll() {
-    front = rear = -1;
-    cout << "All patient appointments cancelled.\n";
-}
+    // Function to serve next patient
+    void ServePatient() {
+        if (front == -1) { 
+            cout << "No patients waiting.\n"; 
+            return; 
+        }
+        cout << "Serving patient ID: " << queue[front] << endl;
+        if (front == rear) front = rear = -1;
+        else front++;
+    }
 
-bool CanDoctorGoHome() {
-    return front == -1;
-}
+    // Function to cancel all appointments
+    void CancelAll() {
+        front = rear = -1;
+        cout << "All patient appointments cancelled.\n";
+    }
 
-void ShowAllPatient() {
-    if (front == -1) { cout << "No patients registered.\n"; return; }
-    int temp[MAX], n = rear - front + 1;
-    for (int i = 0; i < n; i++) temp[i] = queue[front + i];
-    for (int i = 0; i < n - 1; i++)
-        for (int j = 0; j < n - i - 1; j++)
-            if (temp[j] > temp[j + 1]) swap(temp[j], temp[j + 1]);
-    cout << "Registered patient IDs: ";
-    for (int i = 0; i < n; i++) cout << temp[i] << " ";
-    cout << endl;
-}
+    // Function to check if doctor could go home
+    bool CanDoctorGoHome() {
+        return front == -1;
+    }
+
+    // Function to display all patients in sorted order
+    void ShowAllPatient() {
+        if (front == -1) { 
+            cout << "No patients registered.\n"; 
+            return; 
+        }
+        int temp[MAX], n = rear - front + 1;
+        for (int i = 0; i < n; i++) temp[i] = queue[front + i];
+        
+        for (int i = 0; i < n - 1; i++)
+            for (int j = 0; j < n - i - 1; j++)
+                if (temp[j] > temp[j + 1]) swap(temp[j], temp[j + 1]);
+                
+        cout << "Registered patient IDs: ";
+        for (int i = 0; i < n; i++) cout << temp[i] << " ";
+        cout << endl;
+    }
+};
 
 int main() {
-    RegisterPatient();
-    RegisterPatient();
-    RegisterPatient();
-    ShowAllPatient();
+    HospitalQueue hq; // Creating an object
 
-    ServePatient();
-    ShowAllPatient();
+    hq.RegisterPatient();
+    hq.RegisterPatient();
+    hq.RegisterPatient();
+    hq.ShowAllPatient();
 
-    cout << "Can doctor go home? " << (CanDoctorGoHome() ? "Yes" : "No") << endl;
+    hq.ServePatient();
+    hq.ShowAllPatient();
 
-    CancelAll();
-    cout << "Can doctor go home? " << (CanDoctorGoHome() ? "Yes" : "No") << endl;
+    cout << "Can doctor go home? " << (hq.CanDoctorGoHome() ? "Yes" : "No") << endl;
+
+    hq.CancelAll();
+    cout << "Can doctor go home? " << (hq.CanDoctorGoHome() ? "Yes" : "No") << endl;
 
     return 0;
 }
-
