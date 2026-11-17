@@ -1,0 +1,61 @@
+#include <iostream>
+using namespace std;
+
+const int MAX = 100;
+int queue[MAX];
+int front = -1, rear = -1;
+int nextID = 1;
+
+void RegisterPatient() {
+    if (rear == MAX - 1) { cout << "Waiting room is FULL!\n"; return; }
+    if (front == -1) front = rear = 0;
+    else rear++;
+    queue[rear] = nextID++;
+    cout << "Patient registered with ID: " << queue[rear] << endl;
+}
+
+void ServePatient() {
+    if (front == -1) { cout << "No patients waiting.\n"; return; }
+    cout << "Serving patient ID: " << queue[front] << endl;
+    if (front == rear) front = rear = -1;
+    else front++;
+}
+
+void CancelAll() {
+    front = rear = -1;
+    cout << "All patient appointments cancelled.\n";
+}
+
+bool CanDoctorGoHome() {
+    return front == -1;
+}
+
+void ShowAllPatient() {
+    if (front == -1) { cout << "No patients registered.\n"; return; }
+    int temp[MAX], n = rear - front + 1;
+    for (int i = 0; i < n; i++) temp[i] = queue[front + i];
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (temp[j] > temp[j + 1]) swap(temp[j], temp[j + 1]);
+    cout << "Registered patient IDs: ";
+    for (int i = 0; i < n; i++) cout << temp[i] << " ";
+    cout << endl;
+}
+
+int main() {
+    RegisterPatient();
+    RegisterPatient();
+    RegisterPatient();
+    ShowAllPatient();
+
+    ServePatient();
+    ShowAllPatient();
+
+    cout << "Can doctor go home? " << (CanDoctorGoHome() ? "Yes" : "No") << endl;
+
+    CancelAll();
+    cout << "Can doctor go home? " << (CanDoctorGoHome() ? "Yes" : "No") << endl;
+
+    return 0;
+}
+
